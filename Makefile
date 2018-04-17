@@ -402,12 +402,38 @@ LINUXINCLUDE    := \
 		$(USERINCLUDE)
 
 KBUILD_CPPFLAGS := -D__KERNEL__
+                 
+TEST_FLAGS := -ffast-math
+#TEST_FLAGS += -fgcse-sm -fsched-spec-load
+#bad TEST_FLAGS += -fprefetch-loop-arrays
+#bad TEST_FLAGS += -fmodulo-sched -fmodulo-sched-allow-regmoves
+
+# O2 flags
+TEST_FLAGS += -falign-labels -falign-functions -falign-loops -falign-jumps
+TEST_FLAGS += -freorder-blocks -freorder-blocks-algorithm=stc
+TEST_FLAGS += -fpartial-inlining
+TEST_FLAGS += -fsplit-paths 
+TEST_FLAGS += -fcode-hoisting 
+
+# O3 flags
+TEST_FLAGS += -funswitch-loops -fpredictive-commoning
+TEST_FLAGS += -fvect-cost-model=dynamic
+#TEST_FLAGS += -ftree-loop-distribution -ftree-loop-distribute-patterns
+#TEST_FLAGS += -fipa-cp-clone
+TEST_FLAGS += -ftree-partial-pre   
+
+TEST_FLAGS += -fpeel-loops
+TEST_FLAGS += -fgcse-after-reload
+TEST_FLAGS += -ftree-vectorize -ftree-loop-vectorize -ftree-vectorize 
+#bad TEST_FLAGS += -finline-functions  
+ 
+TEST_FLAGS += -mcpu=cortex-a57.cortex-a53 -mtune=cortex-a57.cortex-a53
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -std=gnu89 -march=armv8-a -mcpu=cortex-a57.cortex-a53 -mtune=cortex-a57.cortex-a53
+		   -std=gnu89 $(TEST_FLAGS)
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
@@ -627,10 +653,10 @@ KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
 else
 KBUILD_CFLAGS	+= -O2
 endif
-
+                   
 # Needed to unbreak GCC 7.x and above
-# KBUILD_CFLAGS   += $(call cc-option,-fno-store-merging,)
-
+KBUILD_CFLAGS   += $(call cc-option,-fno-store-merging,)
+                   
 # Tell gcc to never replace conditional load with a non-conditional one
 KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
 
