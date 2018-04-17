@@ -427,7 +427,7 @@ TEST_FLAGS += -fgcse-after-reload
 TEST_FLAGS += -ftree-vectorize -ftree-loop-vectorize -ftree-vectorize 
 #bad TEST_FLAGS += -finline-functions  
  
-TEST_FLAGS += -mcpu=cortex-a57.cortex-a53 -mtune=cortex-a57.cortex-a53
+TEST_FLAGS += -march=armv8.1-a+crypto -mtune=cortex-a57.cortex-a53
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
