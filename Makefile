@@ -377,7 +377,7 @@ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
-LDFLAGS_MODULE  =
+LDFLAGS_MODULE  = --strip-debug
 CFLAGS_KERNEL	=
 AFLAGS_KERNEL	=
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage -fno-tree-loop-im
@@ -427,7 +427,8 @@ TEST_FLAGS += -fgcse-after-reload
 TEST_FLAGS += -ftree-vectorize -ftree-loop-vectorize -ftree-vectorize 
 #bad TEST_FLAGS += -finline-functions  
  
-TEST_FLAGS += -march=armv8.1-a+crypto -mtune=cortex-a57.cortex-a53
+#TEST_FLAGS += -mcpu=cortex-a73.cortex-a53+crc+crypto -mtune=cortex-a73.cortex-a53
+TEST_FLAGS += -mcpu=cortex-a57.cortex-a53+crc+crypto -mtune=cortex-a57.cortex-a53
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
@@ -656,7 +657,14 @@ endif
                    
 # Needed to unbreak GCC 7.x and above
 KBUILD_CFLAGS   += $(call cc-option,-fno-store-merging,)
-                   
+
+# GCC 9
+KBUILD_CFLAGS   += $(call cc-disable-warning,attribute-alias)
+KBUILD_CFLAGS   += $(call cc-disable-warning,packed-not-aligned)
+KBUILD_CFLAGS   += $(call cc-disable-warning,sizeof-pointer-memaccess)
+KBUILD_CFLAGS   += $(call cc-disable-warning,stringop-truncation)
+KBUILD_CFLAGS   += $(call cc-disable-warning,stringop-overflow)
+
 # Tell gcc to never replace conditional load with a non-conditional one
 KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
 
